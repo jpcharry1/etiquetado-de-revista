@@ -93,4 +93,59 @@ $("globalSearch").oninput=e=>{const q=e.target.value;if(q){showView("records");$
 document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 $("mobileMenu").onclick=()=>$("sidebar").classList.toggle("open");
 $("cutoffDate").textContent=new Date().toLocaleDateString("es-CO",{day:"2-digit",month:"short",year:"numeric"});
+
+function exportBackup(){
+  const backup={version:"1.0",exportDate:new Date().toISOString(),records:records};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  const now=new Date();
+  const fecha=now.toISOString().slice(0,10);
+  const hora=now.toISOString().slice(11,19).replace(/:/g,"-");
+  a.download=`respaldo_marcacion_${fecha}_${hora}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast("Respaldo exportado correctamente.");
+}
+
+function importBackupFile(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data||typeof data!=="object"||!Array.isArray(data.records)){
+        throw new Error("Estructura inválida: se esperaba un objeto con un array 'records'.");
+      }
+      const bad=data.records.some(r=>!r||!r.volumen||!r.articulo);
+      if(bad) throw new Error("Algunos registros del respaldo carecen de volumen o artículo.");
+      if(records.length>0){
+        if(!confirm(`¿Sobrescribir los ${records.length} registros actuales con los ${data.records.length} del respaldo? Esta acción no se puede deshacer.`)) return;
+      }
+      records=data.records.map(r=>({
+        volumen:String(r.volumen||"").trim(),
+        articulo:String(r.articulo||"").trim(),
+        estado:r.estado||"En proceso",
+        fechaInicio:r.fechaInicio||"",
+        fechaFin:r.fechaFin||"",
+        total:Number(r.total)||0
+      }));
+      save();
+      showView(activeView);
+      toast(`Respaldo restaurado: ${records.length} registros.`);
+    }catch(err){
+      toast("Error al importar respaldo: "+err.message);
+      console.error(err);
+    }
+  };
+  reader.onerror=()=>toast("No se pudo leer el archivo seleccionado.");
+  reader.readAsText(file);
+}
+
+$("exportBackup").onclick=exportBackup;
+$("importBackup").onclick=()=>$("backupInput").click();
+$("backupInput").onchange=e=>{if(e.target.files[0])importBackupFile(e.target.files[0]);e.target.value="";};
+
 load();if(records.length)showView("home");else $("welcome").classList.remove("hidden");
