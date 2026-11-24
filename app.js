@@ -25,7 +25,7 @@ const norm = s => String(s??"").toLowerCase().normalize("NFD").replace(/[\u0300-
 function load(){try{records=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{records=[]}}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(records))}
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400)}
-function showView(view){activeView=view;$("welcome").classList.add("hidden");$("homeView").classList.toggle("hidden",view!=="home");$("recordsView").classList.toggle("hidden",view!=="records");document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("sidebar").classList.remove("open");if(view==="home")renderDashboard();else renderRecords()}
+function showView(view){activeView=view;$("welcome").classList.add("hidden");$("homeView").classList.toggle("hidden",view!=="home");$("recordsView").classList.toggle("hidden",view!=="records");$("analyticsView").classList.toggle("hidden",view!=="analytics");document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("sidebar").classList.remove("open");if(view==="home")renderDashboard();else if(view==="records")renderRecords()}
 function isMarked(r){return ["marcado","marcada","terminado","terminada","finalizado","finalizada","publicado","publicada","completado","completada"].includes(norm(r.estado))}
 function isInProgress(r){return ["en proceso","proceso","en curso","trabajando"].includes(norm(r.estado))}
 function volumeTotals(){const map={};records.forEach(r=>{if(!map[r.volumen])map[r.volumen]={rows:[],official:0};map[r.volumen].rows.push(r);map[r.volumen].official=Math.max(map[r.volumen].official,Number(r.total)||0)});return map}

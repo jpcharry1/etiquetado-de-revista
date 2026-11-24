@@ -17,6 +17,7 @@
       <nav>
         <button class="nav-item active" data-view="home"><span>▦</span> Inicio</button>
         <button class="nav-item" data-view="records"><span>▤</span> Registros</button>
+  <button class="nav-item" data-view="analytics"><span>📊</span> Analítica avanzada</button>
       </nav>
       <div class="sidebar-bottom">Gestión de volúmenes<br><small>Almacenamiento local</small></div>
     </aside>
@@ -65,6 +66,14 @@
           <div class="filters"><input id="recordSearch" placeholder="Buscar por artículo o volumen..."><select id="volumeFilter"><option value="">Todos los volúmenes</option></select><select id="stateFilter"><option value="">Todos los estados</option><option>Marcado</option><option>En proceso</option><option>Pendiente</option><option>Detenido</option></select></div>
           <div class="table-wrap"><table><thead><tr><th>Volumen</th><th>Artículo</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Días en proceso</th><th>Semáforo</th><th>Acciones</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
           <p class="table-foot" id="recordCount"></p>
+        </div>
+      </section>
+      <section id="analyticsView" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">ANALÍTICA AVANZADA</p><h1>Visualizaciones Flourish</h1><p class="muted">Incrusta dashboards y gráficos interactivos de Flourish mediante iframe o script embed.</p></div></div>
+        <div class="analytics-container">
+          <div class="flourish-embed">
+            <iframe src="https://flo.uri.sh/visualizacion/embed" frameborder="0" scrolling="no" allowfullscreen="allowfullscreen" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+          </div>
         </div>
       </section>
       <footer>Tablero de Marcación de Volúmenes <span>·</span> Los datos permanecen en este navegador.</footer>
