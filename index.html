@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablero de Marcación de Volúmenes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="brand-mark">M</div><div><strong>Marcación editorial</strong><small>Tablero de gestión</small></div></div>
+      <nav>
+        <button class="nav-item active" data-view="home"><span>▦</span> Inicio</button>
+        <button class="nav-item" data-view="records"><span>▤</span> Registros</button>
+      </nav>
+      <div class="sidebar-bottom">Gestión de volúmenes<br><small>Almacenamiento local</small></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
+        <div class="top-search"><span>⌕</span><input id="globalSearch" placeholder="Buscar artículos o volúmenes..." /></div>
+        <div class="cutoff">Fecha de corte <strong id="cutoffDate"></strong></div>
+      </header>
+      <div class="demo-strip">Demostración con datos ficticios</div>
+      <section id="welcome" class="welcome">
+        <div class="welcome-icon">✓</div>
+        <p class="eyebrow">CONTROL DE PRODUCCIÓN EDITORIAL</p>
+        <h1>Tablero de Marcación de Volúmenes</h1>
+        <p class="welcome-question">¿Voy a terminar de marcar el volumen en curso antes de que acabe el mes? Si no, ¿cuántos artículos faltan y cuáles están detenidos?</p>
+        <p class="muted">Importa tu hoja de seguimiento en Excel o CSV para calcular los indicadores y visualizar el estado de cada volumen.</p>
+        <label class="primary-button import-label" for="fileInput">↑ &nbsp; Importar mis datos (Excel o CSV)</label>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden>
+        <p class="tiny">Columnas esperadas: volumen, artículo, estado, fecha de inicio y fecha de fin. Puedes incluir «total volumen» para indicar el total oficial de artículos.</p>
+      </section>
+      <section id="homeView" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">RESUMEN DE GESTIÓN</p><h1>Inicio</h1><p class="muted">Seguimiento del avance y alertas para la revisión quincenal.</p></div><button class="outline-button" id="importAgain">↑ Importar archivo</button></div>
+        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="charts-grid">
+          <article class="panel"><div class="panel-heading"><div><h2>Avance por volumen</h2><p class="muted">Avance real frente al esperado a la fecha</p></div></div><div id="progressChart" class="chart-area"></div></article>
+          <article class="panel"><div class="panel-heading"><div><h2>Estado de los artículos</h2><p class="muted">Distribución de los registros importados</p></div></div><div id="statusChart" class="chart-area"></div></article>
+        </div>
+        <article class="panel attention"><div class="panel-heading"><div><h2>Para atender hoy</h2><p class="muted">Registros en rojo y acción recomendada según el protocolo</p></div><span class="count-pill" id="attentionCount">0 pendientes</span></div><div id="attentionList"></div></article>
+      </section>
+      <section id="recordsView" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">BASE DE SEGUIMIENTO</p><h1>Registros</h1><p class="muted">Administra los artículos y sus fechas de marcación.</p></div><div class="heading-actions"><button class="outline-button" id="deleteAll">Borrar todo</button><button class="primary-button" id="addRecord">＋ Agregar registro</button></div></div>
+        <div class="panel">
+          <div class="filters"><input id="recordSearch" placeholder="Buscar por artículo o volumen..."><select id="volumeFilter"><option value="">Todos los volúmenes</option></select><select id="stateFilter"><option value="">Todos los estados</option><option>Marcado</option><option>En proceso</option><option>Pendiente</option><option>Detenido</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th>Volumen</th><th>Artículo</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Días en proceso</th><th>Semáforo</th><th>Acciones</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+          <p class="table-foot" id="recordCount"></p>
+        </div>
+      </section>
+      <footer>Tablero de Marcación de Volúmenes <span>·</span> Los datos permanecen en este navegador.</footer>
+    </main>
+  </div>
+  <div class="modal-backdrop hidden" id="modal">
+    <form class="modal" id="recordForm">
+      <div class="modal-head"><div><p class="eyebrow">GESTIÓN DE DATOS</p><h2 id="modalTitle">Agregar registro</h2></div><button type="button" class="close-button" id="closeModal">×</button></div>
+      <input type="hidden" id="editIndex">
+      <label>Volumen<input id="fVolume" required placeholder="Ej. Volumen 24-2"></label>
+      <label>Artículo<input id="fArticle" required placeholder="Código o título del artículo"></label>
+      <label>Estado<select id="fState"><option>En proceso</option><option>Pendiente</option><option>Marcado</option><option>Detenido</option></select></label>
+      <div class="form-row"><label>Fecha de inicio<input id="fStart" type="date"></label><label>Fecha de fin<input id="fEnd" type="date"></label></div>
+      <label>Total oficial del volumen <small>(opcional; si se deja vacío se cuentan los artículos del volumen)</small><input id="fTotal" type="number" min="1" placeholder="Ej. 20"></label>
+      <div class="modal-actions"><button type="button" class="outline-button" id="cancelModal">Cancelar</button><button class="primary-button" type="submit">Guardar registro</button></div>
+    </form>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
