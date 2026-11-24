@@ -1,3 +1,4 @@
+// Prueba de despliegue automático
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = "tablero_marcacion_volumen_v1";
 let records = [];
