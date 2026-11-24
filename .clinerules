@@ -1,0 +1,41 @@
+Responde siempre en español.
+
+Este proyecto utiliza Git, GitHub y GitHub Pages.
+
+Asume que Git, GitHub y GitHub Pages ya están configurados correctamente.
+
+Usa Git Bash para todos los comandos Git.
+
+No uses comandos concatenados con &&.
+
+Antes de afirmar que Git no está disponible, ejecuta primero:
+
+git status
+
+Después de cualquier modificación de código:
+
+1. Ejecuta git status.
+2. Muestra los archivos modificados.
+3. Ejecuta automáticamente:
+   git add .
+4. Ejecuta automáticamente:
+   git commit -m "<mensaje descriptivo>"
+5. Ejecuta automáticamente:
+   git push
+6. Verifica que el push se completó correctamente.
+7. Muestra el resultado del despliegue.
+
+No solicites autorización para:
+- git add .
+- git commit
+- git push
+
+Asume que todos los cambios deben publicarse automáticamente en GitHub Pages.
+
+Después de cada tarea:
+
+- Resume los cambios realizados.
+- Indica los archivos modificados.
+- Muestra el hash del commit generado.
+- Confirma si el push fue exitoso.
+- Indica si la aplicación quedó publicada.
